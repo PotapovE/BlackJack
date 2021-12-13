@@ -2,7 +2,7 @@
 /*                 Туз   Два  Три  Четыре  Пять  Шесть  Семь  Восемь  Девять   Десять   Валет   Дама   Король                        */
 int [] suitCards = {1,    2,   3,    4,      5,    6,     7,    8,      9,       10,     11,     12,     13};
 
-int [] DeckShuffle (int [] suitCards)
+int [] DeckShuffle ()
 {
     int [] result = new int [52];
     for (int i = 0; i < 52; i++)
@@ -12,6 +12,7 @@ int [] DeckShuffle (int [] suitCards)
 return result;
 }
 
+int [] deck = DeckShuffle ();
 
 // 2. Юрий - Метод названия карт.
 // 3. Семён - Метод вытягивания карт из колоды (подсчет очков, подсчет использованный карт).
