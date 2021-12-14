@@ -12,19 +12,21 @@ int [] Deck ()
 return result;
 }
 
-void Shuffle (int [] deck)
+void Shuffle(int[] deck, int j)
 {
-for (int i = 0; i < deck.Length; i++)
-{
-    int temp = deck[i];
-    int index = new Random().Next(0, deck.Length);
-    deck [i] = deck [index];
-    deck [index] = temp;
-}
+    for (int i = 0; i < deck.Length; i++)
+    {
+        int temp = deck[i];
+        int index = new Random().Next(0, deck.Length);
+        deck[i] = deck[index];
+        deck[index] = temp;
+    }
+    j--;
+    if (j != 0) Shuffle(deck, j);
 }
 
 int [] deck = Deck ();
-Shuffle(deck);
+Shuffle(deck, 10);
 
 
 // 2. Юрий - Метод названия карт.
