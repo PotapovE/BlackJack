@@ -1,15 +1,14 @@
 ﻿// 1. Мария - Метод создания колоды для игры (с тасовкой).
 // 2. Юрий - Метод названия карт.
 // 3. Семён - Метод вытягивания карт из колоды (подсчет очков, подсчет использованный карт).
-void BatchCards(int[] gameCardDeck, int[,] playersCards)
+void BatchCards(int[] gameCardDeck, List<int> playerCards, int countBatchCard, int countAddCards)
 {
-    for (int n = 0, i = 0; n < playersCards.GetLength(0); n++)
+    int batchStop = countBatchCard + countAddCards;
+    if (countBatchCard > gameCardDeck.Length - 1) countBatchCard = 0;
+    for (; countBatchCard < batchStop; countBatchCard++)
     {
-        for (int m = 0; m < playersCards.GetLength(1); m++, i++)
-        {
-            playersCards[n,m] = gameCardDeck[i];
-        }
-    } 
+        playerCards.Add(gameCardDeck[countBatchCard]);
+    }
 }
 void GameProcess(int[] gameCardDeck, int[] gameStatus)
 {
@@ -19,13 +18,31 @@ void GameProcess(int[] gameCardDeck, int[] gameStatus)
     //  сумма очков дилера;
     //  сумма очков первого игрока (пока единственного)]
     int countPlayers = gameStatus[0] + 1;
-    int[,] batchGame = new int[countPlayers, 10];
+    List<int>[] batchGame = new List<int>[countPlayers];
     //дилер выдает карты
-    BatchCards(gameCardDeck, batchGame);
-    // for (int i = 0; i < gameStatus[0]; i++) ShowCards()
+    for (int n = 0; n < countPlayers - 1; n++) BatchCards(gameCardDeck, batchGame[n], gameStatus[1],2);
     //вывод на экран
-    //Проверка совпадений по правилам
-    //предложение игроку выполнить действие
+    ShowCards(batchGame);
+    //Запрос на добавление карты !(Console.ReadKey(true).Key == ConsoleKey.Escape)
+    for (int n = 0; n < countPlayers - 1; n++)
+    {
+        bool addCards = true;
+        while (addCards)
+        {
+            Console.WriteLine("Добавить?");
+            switch (Console.ReadKey(true).Key)
+            {
+                case ConsoleKey.A:
+                    BatchCards(gameCardDeck, batchGame[n], gameStatus[1],1);
+                    ShowCards(batchGame);
+                    // если новая карта больше 22, то возвращаем addCards = false;
+                    break;
+                case ConsoleKey.S: addCards = false; break;
+                default: break;
+            }
+        }
+    }
+    // DilerLogic();
 }
 // 4. Ольга - Метод сравнения очков (кто победил, ничья).
 // 5. Евгений - Метод цикла хода игры (сыграть ещё, или выйти).
