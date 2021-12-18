@@ -2,6 +2,7 @@
 // 2. Юрий - Метод названия карт.
 // 3. Семён - Метод вытягивания карт из колоды (подсчет очков, подсчет использованный карт).
 // Раздача карт
+
 void BatchCards(int[] gameCardDeck, List<int> playerCards, int[] gameScore, int numbOfPlayer, int countAddCards)
 {
     int batchStop = gameScore[0] + countAddCards;
