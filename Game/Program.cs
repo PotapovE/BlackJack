@@ -148,7 +148,7 @@ void GameProcess(int[] gameCardDeck, int[] gameStatus)
     }
     // Вывод карт дилера
     Console.WriteLine("Карты дилера:");
-    ShowCards(batchGame[gameStatus[1] - 1]);                
+    ShowCards(batchGame[gameStatus[1] - 1]);
     //Запрос на добавление карты игроку и дилеру
     FillCardsList(gameCardDeck, batchGame, gameStatus);
     System.Console.WriteLine($"Очки игрока {gameStatus[2]}, очки дилера {gameStatus[3]}, выдано карт {gameStatus[0]}");
@@ -157,23 +157,12 @@ void GameProcess(int[] gameCardDeck, int[] gameStatus)
 // Шаблон метода для Юрия, какие данные будут входящими
 void ShowCards(List<int> playerCards)               // Добавить переменную, которая показывает скрытые карты
 {
-    string ValueCard = string.Empty;
+    string valueCard = string.Empty;
     foreach (int s in playerCards) //System.Console.Write(s);
     {
-        if (s == 1) ValueCard = "Туз";
-        if (s == 2) ValueCard = "Двойка";
-        if (s == 3) ValueCard = "Тройка";
-        if (s == 4) ValueCard = "Четверка";
-        if (s == 5) ValueCard = "Пятерка";
-        if (s == 6) ValueCard = "Шестерка";
-        if (s == 7) ValueCard = "Семерка";
-        if (s == 8) ValueCard = "Восьмерка";
-        if (s == 9) ValueCard = "Девятка";
-        if (s == 10) ValueCard = "Десятка";
-        if (s == 11) ValueCard = "Валет";
-        if (s == 12) ValueCard = "Дама";
-        if (s == 13) ValueCard = "Король";
-        System.Console.Write(ValueCard + " ");
+        string[] nameCards = { "Туз", "Двойка", "Тройка", "Четверка", "Пятерка", "Шестерка", "Семерка", "Восьмерка", "Девятка", "Десятка", "Валет", "Дама", "Король" };
+        valueCard = nameCards[s - 1];
+        System.Console.Write(valueCard + " ");
     }
     System.Console.WriteLine();
 }
@@ -188,17 +177,21 @@ void GameRun()
     Console.WriteLine("Готовы к игре BlackJack? Желаем удачи!");
     GameProcess(gameDesk, game);
     Console.WriteLine();
-    Console.WriteLine("Готовы сыграть еще разок? Нажмите А, если готовы продолжить и S, если нет."); 
-    switch (Console.ReadKey(true).Key)              
-    {                                                   // Заменить на do while
-        case ConsoleKey.A:
-            Shuffle(gameDesk, 10);
-            GameProcess(gameDesk, game);
-            break;
-        case ConsoleKey.S:
-            Console.WriteLine("Спасибо за игру!");
-            break;
-        default: break;
+
+    while (true)
+    {
+        Console.WriteLine("Готовы сыграть еще разок? Нажмите А, если готовы продолжить и S, если нет.");
+        switch (Console.ReadKey(true).Key)
+        {                                                   // Заменить на do while
+            case ConsoleKey.A:
+                Shuffle(gameDesk, 10);
+                GameProcess(gameDesk, game);
+                break;
+            case ConsoleKey.S:
+                Console.WriteLine("Спасибо за игру!");
+                break;
+            default: break;
+        }
     }
 }
 
