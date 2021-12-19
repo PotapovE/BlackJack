@@ -1,7 +1,6 @@
 ﻿// Блэк-Джек
 
 // 1. Мария - Метод создания колоды для игры (с тасовкой).
-
 int[] Deck()
 {
     int[] result = new int[52];
@@ -13,7 +12,6 @@ int[] Deck()
     }
     return result;
 }
-
 void Shuffle(int[] deck, int j)
 {
     for (int i = 0; i < deck.Length; i++)
@@ -27,10 +25,9 @@ void Shuffle(int[] deck, int j)
     if (j != 0) Shuffle(deck, j);
 }
 
-// int[] deck = Deck();
-// Shuffle(deck, 10);
-
 // 2. Юрий - Метод названия карт.
+
+// Добавить масти
 
 // 3. Семён - Метод вытягивания карт из колоды (подсчет очков, подсчет использованный карт).
 // Раздача карт
@@ -47,7 +44,7 @@ void BatchCards(int[] gameCardDeck, List<int> playerCards, int[] gameScore, int 
 void DilerLogic(int[] gameCardDeck, List<int> dilerCards, int[] gameStatus)
 {
     int dilerScore = gameStatus[gameStatus.Length - 1];
-    while (dilerScore <= 17)
+    while (CardTransferToScore(dilerCards) < 17)
     {
         BatchCards(gameCardDeck, dilerCards, gameStatus, gameStatus.Length, 1);
         dilerScore = CardTransferToScore(dilerCards);
@@ -98,7 +95,16 @@ int CardTransferToScore(List<int> playerCards, int scorePlayer = 0)
             case 1:
                 countAce++;
                 break;
-            case 10 | 11 | 12 | 13:
+            case 10:
+                scorePlayer += 10;
+                break;
+            case 11:
+                scorePlayer += 10;
+                break;
+            case 12:
+                scorePlayer += 10;
+                break;
+            case 13:
                 scorePlayer += 10;
                 break;
             default:
@@ -108,10 +114,9 @@ int CardTransferToScore(List<int> playerCards, int scorePlayer = 0)
     }
     // Если есть тузы в прикупе и сумма очков вместе с ними больше 21 => они превращаются в 1
     // Иначе => в 11
-    scorePlayer += countAce > 0 && scorePlayer + 11 * countAce < 21 ? 11 * countAce : countAce;
+    scorePlayer += countAce > 0 && scorePlayer + 11 * countAce <= 21 ? 11 * countAce : countAce;
     return scorePlayer;
 }
-
 
 // 4. Ольга - Метод сравнения очков (кто победил, ничья)
 // Использовала метод int, который возвращает значения, на случай дальнейшей доработки игры со ставками
@@ -124,7 +129,6 @@ int CalculateWinner(int dealerPoints, int playerPoints)
     { Console.WriteLine("Поздравляем, Вы выиграли!"); return 2; }
     else Console.WriteLine("Увы, Вы проиграли( Повезет в следующей игре!"); return 0;
 }
-
 // Main Process
 void GameProcess(int[] gameCardDeck, int[] gameStatus)
 {
@@ -144,24 +148,37 @@ void GameProcess(int[] gameCardDeck, int[] gameStatus)
     }
     // Вывод карт дилера
     Console.WriteLine("Карты дилера:");
-    ShowCards(batchGame[gameStatus[1] - 1]);
+    ShowCards(batchGame[gameStatus[1] - 1]);                
     //Запрос на добавление карты игроку и дилеру
     FillCardsList(gameCardDeck, batchGame, gameStatus);
     System.Console.WriteLine($"Очки игрока {gameStatus[2]}, очки дилера {gameStatus[3]}, выдано карт {gameStatus[0]}");
     Console.WriteLine(CalculateWinner(gameStatus[3], gameStatus[2]));
 }
 // Шаблон метода для Юрия, какие данные будут входящими
-void ShowCards(List<int> playerCards)
+void ShowCards(List<int> playerCards)               // Добавить переменную, которая показывает скрытые карты
 {
-    foreach (int s in playerCards) System.Console.Write(s);
+    string ValueCard = string.Empty;
+    foreach (int s in playerCards) //System.Console.Write(s);
+    {
+        if (s == 1) ValueCard = "Туз";
+        if (s == 2) ValueCard = "Двойка";
+        if (s == 3) ValueCard = "Тройка";
+        if (s == 4) ValueCard = "Четверка";
+        if (s == 5) ValueCard = "Пятерка";
+        if (s == 6) ValueCard = "Шестерка";
+        if (s == 7) ValueCard = "Семерка";
+        if (s == 8) ValueCard = "Восьмерка";
+        if (s == 9) ValueCard = "Девятка";
+        if (s == 10) ValueCard = "Десятка";
+        if (s == 11) ValueCard = "Валет";
+        if (s == 12) ValueCard = "Дама";
+        if (s == 13) ValueCard = "Король";
+        System.Console.Write(ValueCard + " ");
+    }
     System.Console.WriteLine();
 }
-// int[] gameDesk = new int[] { 1, 1, 1, 4, 5, 6, 7, 8, 9 }, game = new int[] { 0, 2, 0, 0 };
-// GameProcess(gameDesk, game);
-
 
 // 5. Евгений - Метод цикла хода игры (сыграть ещё, или выйти).
-
 void GameRun()
 {
     int[] gameDesk = Deck(), game = new int[] { 0, 2, 0, 0 };
@@ -171,9 +188,9 @@ void GameRun()
     Console.WriteLine("Готовы к игре BlackJack? Желаем удачи!");
     GameProcess(gameDesk, game);
     Console.WriteLine();
-    Console.WriteLine("Готовы сыграть еще разок? Нажмите А, если готовы продолжить и S, если нет.");
-    switch (Console.ReadKey(true).Key)
-    {
+    Console.WriteLine("Готовы сыграть еще разок? Нажмите А, если готовы продолжить и S, если нет."); 
+    switch (Console.ReadKey(true).Key)              
+    {                                                   // Заменить на do while
         case ConsoleKey.A:
             Shuffle(gameDesk, 10);
             GameProcess(gameDesk, game);
