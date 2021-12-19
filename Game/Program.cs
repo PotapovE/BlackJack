@@ -49,7 +49,9 @@ void FillCardsList(int[] gameCardDeck, List<int>[] playersCards, int[] gameStatu
                     gameStatus[n + 2] = CardTransferToScore(playersCards[n]);
                     addCards = false;
                     break;
-                default: break;
+                default: 
+                    Console.WriteLine("Для добавления карты нажмите A, для остановки - S");
+                break;
             }
         }
     }
