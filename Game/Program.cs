@@ -19,7 +19,7 @@ void DilerLogic(int[] gameCardDeck, List<int> dilerCards, int[] gameStatus)
     {
         BatchCards(gameCardDeck, dilerCards, gameStatus, gameStatus.Length, 1);
         dilerScore = CardTransferToScore(dilerCards);
-        ShowCards(dilerCards);
+        ShowCards(dilerCards, 0);
     }
     gameStatus[gameStatus.Length - 1] = dilerScore;
 }
@@ -32,7 +32,7 @@ void FillCardsList(int[] gameCardDeck, List<int>[] playersCards, int[] gameStatu
     for (int n = 0; n < countPlayers; n++)
     {
         Console.WriteLine($"Играет {n+1} игрок");
-        ShowCards(playersCards[n]);
+        ShowCards(playersCards[n], 0);
         bool addCards = true;
         while (addCards)
         {
@@ -42,7 +42,7 @@ void FillCardsList(int[] gameCardDeck, List<int>[] playersCards, int[] gameStatu
                 case ConsoleKey.A:
                     BatchCards(gameCardDeck, playersCards[n], gameStatus, n, 1);
                     gameStatus[n + 2] = CardTransferToScore(playersCards[n]);
-                    ShowCards(playersCards[n]);
+                    ShowCards(playersCards[n], 0);
                     if (gameStatus[n + 2] > 21) addCards = false;
                     break;
                 case ConsoleKey.S: 
@@ -66,7 +66,13 @@ int CardTransferToScore(List<int> playerCards, int scorePlayer = 0)
             case 1:
             countAce++;
             break;
-            case 10 | 11 | 12 | 13 :
+            case 11:
+                scorePlayer += 10;
+                break;
+            case 12:
+                scorePlayer += 10;
+                break;
+            case 13:
                 scorePlayer += 10;
                 break;
             default:
@@ -98,15 +104,16 @@ void GameProcess(int[] gameCardDeck, int[] gameStatus)
         BatchCards(gameCardDeck, batchGame[n], gameStatus, n, startBatch);
     }
     // Вывод карт дилера
-    ShowCards(batchGame[gameStatus[1]-1]);
+    ShowCards(batchGame[gameStatus[1]-1], 1);
     //Запрос на добавление карты игроку и дилеру
     FillCardsList(gameCardDeck, batchGame, gameStatus);
     System.Console.WriteLine($"Очки игрока {gameStatus[2]}, очки дилера {gameStatus[3]}, выдано карт {gameStatus[0]}");
 }
 // Шаблон метода для Юрия, какие данные будут входящими
-void ShowCards(List<int> playerCards)
+void ShowCards(List<int> playerCards, int countShowCards)
 {
-    foreach (int s in playerCards) System.Console.Write(s);
+    if (countShowCards == 0) countShowCards = playerCards.Count;
+    for (int i = 0; i < countShowCards; i++) Console.Write(playerCards[i]);
     System.Console.WriteLine();
 }
 int[] gameDesk = new int[] { 12, 11, 1, 1, 1, 6, 7, 8, 9 }, game = new int[] { 0, 2, 0, 0 };
