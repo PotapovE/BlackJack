@@ -15,7 +15,7 @@ void BatchCards(int[] gameCardDeck, List<int> playerCards, int[] gameScore, int 
 void DilerLogic(int[] gameCardDeck, List<int> dilerCards, int[] gameStatus)
 {
     int dilerScore = gameStatus[gameStatus.Length - 1];
-    while (dilerScore <= 17)
+    while (CardTransferToScore(dilerCards) <= 17)
     {
         BatchCards(gameCardDeck, dilerCards, gameStatus, gameStatus.Length, 1);
         dilerScore = CardTransferToScore(dilerCards);
@@ -24,6 +24,7 @@ void DilerLogic(int[] gameCardDeck, List<int> dilerCards, int[] gameStatus)
     gameStatus[gameStatus.Length - 1] = dilerScore;
 }
 // Добавление карт игроку и дилеру
+// TO DO если у игрока перебор, дилер не буурт
 void FillCardsList(int[] gameCardDeck, List<int>[] playersCards, int[] gameStatus)
 {
     int countBatchCard = gameStatus[0];
@@ -108,7 +109,7 @@ void ShowCards(List<int> playerCards)
     foreach (int s in playerCards) System.Console.Write(s);
     System.Console.WriteLine();
 }
-int[] gameDesk = new int[] { 1, 1, 1, 4, 5, 6, 7, 8, 9 }, game = new int[] { 0, 2, 0, 0 };
+int[] gameDesk = new int[] { 1, 1, 1, 1, 1, 6, 7, 8, 9 }, game = new int[] { 0, 2, 0, 0 };
 GameProcess(gameDesk, game);
 // 4. Ольга - Метод сравнения очков (кто победил, ничья).
 // 5. Евгений - Метод цикла хода игры (сыграть ещё, или выйти).
