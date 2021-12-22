@@ -15,23 +15,32 @@ void BatchCards(int[] gameCardDeck, List<int> playerCards, int[] gameScore, int 
 void DilerLogic(int[] gameCardDeck, List<int> dilerCards, int[] gameStatus)
 {
     int dilerScore = gameStatus[gameStatus.Length - 1];
-    while (CardTransferToScore(dilerCards) < 17)
+    int countOverScore = gameStatus[1] - 1;
+    dilerScore = CardTransferToScore(dilerCards);
+    ShowCards(dilerCards, 0);
+    // Добавлена переменная, чтобы определять всех игроков с перебором очков,
+    // тогда карты дилера не наполняются
+    for (int p = 2; p < gameStatus.Length - 1; p++) if (gameStatus[p] > 21) countOverScore--;
+    if (countOverScore != 0)
     {
-        BatchCards(gameCardDeck, dilerCards, gameStatus, gameStatus.Length, 1);
-        dilerScore = CardTransferToScore(dilerCards);
-        ShowCards(dilerCards, 0);
+        while (CardTransferToScore(dilerCards) < 17)
+        {
+            BatchCards(gameCardDeck, dilerCards, gameStatus, gameStatus.Length, 1);
+            dilerScore = CardTransferToScore(dilerCards);
+            ShowCards(dilerCards, 0);
+        }
     }
     gameStatus[gameStatus.Length - 1] = dilerScore;
 }
 // Добавление карт игроку и дилеру
-// TO DO если у игрока перебор, дилер не буурт
 void FillCardsList(int[] gameCardDeck, List<int>[] playersCards, int[] gameStatus)
 {
     int countBatchCard = gameStatus[0];
     int countPlayers = gameStatus[1] - 1;
+    int tempPlayerScore = 0;
     for (int n = 0; n < countPlayers; n++)
     {
-        Console.WriteLine($"Играет {n+1} игрок");
+        Console.WriteLine($"Играет {n + 1} игрок");
         ShowCards(playersCards[n], 0);
         bool addCards = true;
         while (addCards)
@@ -41,19 +50,21 @@ void FillCardsList(int[] gameCardDeck, List<int>[] playersCards, int[] gameStatu
             {
                 case ConsoleKey.A:
                     BatchCards(gameCardDeck, playersCards[n], gameStatus, n, 1);
-                    gameStatus[n + 2] = CardTransferToScore(playersCards[n]);
+                    tempPlayerScore = CardTransferToScore(playersCards[n]);
                     ShowCards(playersCards[n], 0);
                     if (gameStatus[n + 2] > 21) addCards = false;
                     break;
-                case ConsoleKey.S: 
-                    gameStatus[n + 2] = CardTransferToScore(playersCards[n]);
+                case ConsoleKey.S:
+                    tempPlayerScore = CardTransferToScore(playersCards[n]);
+                    Console.WriteLine("Игрок отказался добирать карты");
                     addCards = false;
                     break;
-                default: 
+                default:
                     Console.WriteLine("Для добавления карты нажмите A, для остановки - S");
-                break;
+                    break;
             }
         }
+        gameStatus[n + 2] = tempPlayerScore;
     }
     DilerLogic(gameCardDeck, playersCards[playersCards.Length - 1], gameStatus);
 }
@@ -69,7 +80,7 @@ int CardTransferToScore(List<int> playerCards, int scorePlayer = 0, int countAce
     }
     // Если есть тузы в прикупе и сума очков вместе с ними больше 21 => они превращаются в 1
     // Иначе => в 11
-    scorePlayer += countAce > 0 && scorePlayer + 11*countAce <= 21 ? 11*countAce : countAce;
+    scorePlayer += countAce > 0 && scorePlayer + 11 * countAce <= 21 ? 11 * countAce : countAce;
     return scorePlayer;
 }
 
@@ -91,7 +102,7 @@ void GameProcess(int[] gameCardDeck, int[] gameStatus)
         BatchCards(gameCardDeck, batchGame[n], gameStatus, n, startBatch);
     }
     // Вывод карт дилера
-    ShowCards(batchGame[gameStatus[1]-1], 1);
+    ShowCards(batchGame[gameStatus[1] - 1], 1);
     //Запрос на добавление карты игроку и дилеру
     FillCardsList(gameCardDeck, batchGame, gameStatus);
     System.Console.WriteLine($"Очки игрока {gameStatus[2]}, очки дилера {gameStatus[3]}, выдано карт {gameStatus[0]}");
@@ -100,7 +111,7 @@ void GameProcess(int[] gameCardDeck, int[] gameStatus)
 void ShowCards(List<int> playerCards, int countShowCards)
 {
     if (countShowCards == 0) countShowCards = playerCards.Count;
-    for (int i = 0; i < countShowCards; i++) Console.Write(playerCards[i]);
+    for (int i = 0; i < countShowCards; i++) Console.Write(playerCards[i] + " ");
     System.Console.WriteLine();
 }
 int[] gameDesk = new int[] { 12, 11, 1, 1, 1, 6, 7, 8, 9 }, game = new int[] { 0, 2, 0, 0 };
