@@ -15,11 +15,20 @@ void BatchCards(int[] gameCardDeck, List<int> playerCards, int[] gameScore, int 
 void DilerLogic(int[] gameCardDeck, List<int> dilerCards, int[] gameStatus)
 {
     int dilerScore = gameStatus[gameStatus.Length - 1];
-    while (dilerScore <= 17)
+    int countOverScore = gameStatus[1] - 1;
+    dilerScore = CardTransferToScore(dilerCards);
+    ShowCards(dilerCards, 0);
+    // Добавлена переменная, чтобы определять всех игроков с перебором очков,
+    // тогда карты дилера не наполняются
+    for (int p = 2; p < gameStatus.Length - 1; p++) if (gameStatus[p] > 21) countOverScore--;
+    if (countOverScore != 0)
     {
-        BatchCards(gameCardDeck, dilerCards, gameStatus, gameStatus.Length, 1);
-        dilerScore = CardTransferToScore(dilerCards);
-        ShowCards(dilerCards);
+        while (CardTransferToScore(dilerCards) < 17)
+        {
+            BatchCards(gameCardDeck, dilerCards, gameStatus, gameStatus.Length, 1);
+            dilerScore = CardTransferToScore(dilerCards);
+            ShowCards(dilerCards, 0);
+        }
     }
     gameStatus[gameStatus.Length - 1] = dilerScore;
 }
@@ -28,10 +37,11 @@ void FillCardsList(int[] gameCardDeck, List<int>[] playersCards, int[] gameStatu
 {
     int countBatchCard = gameStatus[0];
     int countPlayers = gameStatus[1] - 1;
+    int tempPlayerScore = 0;
     for (int n = 0; n < countPlayers; n++)
     {
-        Console.WriteLine($"Играет {n+1} игрок");
-        ShowCards(playersCards[n]);
+        Console.WriteLine($"Играет {n + 1} игрок");
+        ShowCards(playersCards[n], 0);
         bool addCards = true;
         while (addCards)
         {
@@ -40,42 +50,37 @@ void FillCardsList(int[] gameCardDeck, List<int>[] playersCards, int[] gameStatu
             {
                 case ConsoleKey.A:
                     BatchCards(gameCardDeck, playersCards[n], gameStatus, n, 1);
-                    gameStatus[n + 2] = CardTransferToScore(playersCards[n]);
-                    ShowCards(playersCards[n]);
+                    tempPlayerScore = CardTransferToScore(playersCards[n]);
+                    ShowCards(playersCards[n], 0);
                     if (gameStatus[n + 2] > 21) addCards = false;
                     break;
-                case ConsoleKey.S: 
-                    gameStatus[n + 2] = CardTransferToScore(playersCards[n]);
+                case ConsoleKey.S:
+                    tempPlayerScore = CardTransferToScore(playersCards[n]);
+                    Console.WriteLine("Игрок отказался добирать карты");
                     addCards = false;
                     break;
-                default: break;
+                default:
+                    Console.WriteLine("Для добавления карты нажмите A, для остановки - S");
+                    break;
             }
         }
+        gameStatus[n + 2] = tempPlayerScore;
     }
     DilerLogic(gameCardDeck, playersCards[playersCards.Length - 1], gameStatus);
 }
 // Подсчет очков
-int CardTransferToScore(List<int> playerCards, int scorePlayer = 0)
+int CardTransferToScore(List<int> playerCards, int scorePlayer = 0, int countAce = 0, int tempCard = 0)
 {
-    int countAce = 0;
     for (int c = 0; c < playerCards.Count; c++)
     {
-        switch (playerCards[c])
-        {
-            case 1:
-            countAce++;
-            break;
-            case 10 | 11 | 12 | 13 :
-                scorePlayer += 10;
-                break;
-            default:
-                scorePlayer += playerCards[c];
-                break;
-        }
+        tempCard = playerCards[c] % 100;
+        if (tempCard == 1) countAce++;
+        else if (tempCard >= 10) scorePlayer += 10;
+        else scorePlayer += playerCards[c];
     }
     // Если есть тузы в прикупе и сума очков вместе с ними больше 21 => они превращаются в 1
     // Иначе => в 11
-    scorePlayer += countAce > 0 && scorePlayer + 11*countAce < 21 ? 11*countAce : countAce;
+    scorePlayer += countAce > 0 && scorePlayer + 11 * countAce <= 21 ? 11 * countAce : countAce;
     return scorePlayer;
 }
 
@@ -97,18 +102,19 @@ void GameProcess(int[] gameCardDeck, int[] gameStatus)
         BatchCards(gameCardDeck, batchGame[n], gameStatus, n, startBatch);
     }
     // Вывод карт дилера
-    ShowCards(batchGame[gameStatus[1]-1]);
+    ShowCards(batchGame[gameStatus[1] - 1], 1);
     //Запрос на добавление карты игроку и дилеру
     FillCardsList(gameCardDeck, batchGame, gameStatus);
     System.Console.WriteLine($"Очки игрока {gameStatus[2]}, очки дилера {gameStatus[3]}, выдано карт {gameStatus[0]}");
 }
 // Шаблон метода для Юрия, какие данные будут входящими
-void ShowCards(List<int> playerCards)
+void ShowCards(List<int> playerCards, int countShowCards)
 {
-    foreach (int s in playerCards) System.Console.Write(s);
+    if (countShowCards == 0) countShowCards = playerCards.Count;
+    for (int i = 0; i < countShowCards; i++) Console.Write(playerCards[i] + " ");
     System.Console.WriteLine();
 }
-int[] gameDesk = new int[] { 1, 1, 1, 4, 5, 6, 7, 8, 9 }, game = new int[] { 0, 2, 0, 0 };
+int[] gameDesk = new int[] { 12, 11, 1, 1, 1, 6, 7, 8, 9 }, game = new int[] { 0, 2, 0, 0 };
 GameProcess(gameDesk, game);
 // 4. Ольга - Метод сравнения очков (кто победил, ничья).
 // 5. Евгений - Метод цикла хода игры (сыграть ещё, или выйти).
