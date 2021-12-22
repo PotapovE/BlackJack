@@ -58,29 +58,14 @@ void FillCardsList(int[] gameCardDeck, List<int>[] playersCards, int[] gameStatu
     DilerLogic(gameCardDeck, playersCards[playersCards.Length - 1], gameStatus);
 }
 // Подсчет очков
-int CardTransferToScore(List<int> playerCards, int scorePlayer = 0)
+int CardTransferToScore(List<int> playerCards, int scorePlayer = 0, int countAce = 0, int tempCard = 0)
 {
-    int countAce = 0;
     for (int c = 0; c < playerCards.Count; c++)
     {
-        switch (playerCards[c])
-        {
-            case 1:
-            countAce++;
-            break;
-            case 11:
-                scorePlayer += 10;
-                break;
-            case 12:
-                scorePlayer += 10;
-                break;
-            case 13:
-                scorePlayer += 10;
-                break;
-            default:
-                scorePlayer += playerCards[c];
-                break;
-        }
+        tempCard = playerCards[c] % 100;
+        if (tempCard == 1) countAce++;
+        else if (tempCard >= 10) scorePlayer += 10;
+        else scorePlayer += playerCards[c];
     }
     // Если есть тузы в прикупе и сума очков вместе с ними больше 21 => они превращаются в 1
     // Иначе => в 11
