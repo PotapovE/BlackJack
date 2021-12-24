@@ -1,18 +1,22 @@
 ﻿// 1. Мария - Метод создания колоды для игры (с тасовкой).
 
-int [] Deck ()
+int[] Deck()
 {
-    int [] result = new int [52];
+    int[] result = new int[52];
     int j = 0;
-    for (int i = 0; i < result.Length; i++)
+    for (int i = 0; i < result.Length-1; i++)
     {
-            if (i % 4 == 0) j++;
-            result [i] = j;
+        if (i % 4 == 0) 
+        {
+            j++;
+            result [i] = 100 + j;
+        }
+        result [i + 1] = result [i] + 100;
     }
-return result;
+    return result;
 }
 
-void Shuffle(int[] deck, int j)
+void Shuffle(int[] deck /*, int j*/)
 {
     for (int i = 0; i < deck.Length; i++)
     {
@@ -21,12 +25,12 @@ void Shuffle(int[] deck, int j)
         deck[i] = deck[index];
         deck[index] = temp;
     }
-    j--;
-    if (j != 0) Shuffle(deck, j);
+    /*j--;
+    if (j != 0) Shuffle(deck, j);*/
 }
 
 int [] deck = Deck ();
-Shuffle(deck, 10);
+Shuffle(deck);
 
 
 // 2. Юрий - Метод названия карт.
